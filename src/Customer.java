@@ -1,44 +1,74 @@
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 public class Customer {
     private String name;
-    private Vector rentals = new Vector();
-    public Customer (String newname){
-        name = newname;
+    private List<Rental> rentals;
+
+    public Customer (String name){
+        this.name = name;
     }
-    public void addRental(Rental arg) {
-        rentals.addElement(arg);
+
+    public void addRental(Rental rental) {
+        rentals.add(rental);
     }
     public String getName (){
         return name;
     }
-    public String statement() {
-        double totalAmount = 0;
-        int frequentRenterPoints = 0;
-        Enumeration enum_rentals = rentals.elements();
-        String result = "Rental Record for " + this.getName() + "\n";
-        result += "\t" + "Title" + "\t" + "\t" + "Days" + "\t" + "Amount" + "\n";
 
-        while (enum_rentals.hasMoreElements()) {
-            double thisAmount = 0;
-            Rental each = (Rental) enum_rentals.nextElement();
-            //determine amounts for each line
-            thisAmount = amountFor(each);
-            // add frequent renter points
-            frequentRenterPoints ++;
-            // add bonus for a two day new release rental
-            if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE) && each.getDaysRented() > 1) 
-                frequentRenterPoints ++;
-            //show figures for this rental
-            result += "\t" + each.getMovie().getTitle()+ "\t" + "\t" + each.getDaysRented() + "\t" + String.valueOf(thisAmount) + "\n";
-            totalAmount += thisAmount;
+    public String statement() {
+        StringBuilder builder = new StringBuilder();
+            builder.append("Rental Record for ");
+            builder.append(this.name);
+            builder.append("\n");
+            builder.append("\t");
+            builder.append("Title");
+            builder.append("\t");
+            builder.append("\t");
+            builder.append("Days");
+            builder.append("\t");
+            builder.append("Amount");
+
+
+        for (Rental rental : rentals){
+            builder.append("\n");
+            builder.append(rental.getMovie().getTitle());
+            builder.append("\t");
+            builder.append("\t");
+            builder.append(rental.getDaysRented());
+            builder.append("\t");
+            builder.append(Double.toString(rental.getCharge()));
         }
-        //add footer lines
-        result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-        result += "You earned " + String.valueOf(frequentRenterPoints) + " frequent renter points";
+
+             builder.append("\n");
+             builder.append("Amount owed is: ");
+             builder.append(Double.toString(getTotalCharge()));
+             builder.append("\n");
+             builder.append("You earned ");
+             builder.append(Double.toString(getTotalFrequentRenterPoints()));
+             builder.append(" frequent renter points");
+             builder.append("\n");
+
+             return builder.toString();
+    }
+
+    private double getTotalCharge() {
+        double result = 0;
+        for (Rental rental: rentals) {
+            result = result + rental.getCharge();
+        }
         return result;
     }
+
+    private int getTotalFrequentRenterPoints(){
+        int result = 0;
+        for (Rental rental: rentals) {
+            result = result + rental.getFrequentRenterPoints();
+        }
+        return result;
+    }
+
 
     private double amountFor(Rental each) {
         double thisAmount = 0;
