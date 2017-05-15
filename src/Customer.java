@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
@@ -6,8 +7,9 @@ public class Customer {
     private String name;
     private List<Rental> rentals;
 
-    public Customer (String name){
+    public Customer (String name) {
         this.name = name;
+        this.rentals = new ArrayList<>();
     }
 
     public void addRental(Rental rental) {
